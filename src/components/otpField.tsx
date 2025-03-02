@@ -55,7 +55,7 @@ export default function OtpVerificationForm({email}:{email: string}) {
     
   }
 
-//   REsending otp---------------------------------------
+//   Resending otp---------------------------------------
   function handleResendOtp() {
     setResending(true)
     try {
