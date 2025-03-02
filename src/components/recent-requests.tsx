@@ -1,135 +1,116 @@
 "use client"
 
-import { useState } from "react"
-import { Check, Clock, X } from "lucide-react"
+import { useEffect, useState } from "react"
+import { Activity, Check, Clock, User, X } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import axios from "axios"
+import { formatDistanceToNow } from "date-fns"
+
+
+interface Request {
+  comment : string,
+  createdAt : string,
+  duration : 0,
+  forwardUrl : string,
+  id : string,
+  requestId : string,
+  requestUrl : string,
+  response : {
+    message : string,
+    success : boolean,
+  }
+  statusCode : number,
+  type : string,
+  updatedAt : string,
+  userId : string
+}
+
+// id: 1,
+// endpoint: "/api/users",
+// method: "GET",
+// status: 200,
+// time: "2 minutes ago",
+// duration: "89ms",
 
 export function RecentRequests() {
-  const [requests] = useState([
-    {
-      id: 1,
-      endpoint: "/api/users",
-      method: "GET",
-      status: 200,
-      time: "2 minutes ago",
-      duration: "89ms",
-    },
-    {
-      id: 2,
-      endpoint: "/api/products",
-      method: "GET",
-      status: 200,
-      time: "5 minutes ago",
-      duration: "124ms",
-    },
-    {
-      id: 3,
-      endpoint: "/api/users/5",
-      method: "GET",
-      status: 200,
-      time: "10 minutes ago",
-      duration: "76ms",
-    },
-    {
-      id: 4,
-      endpoint: "/api/auth/login",
-      method: "POST",
-      status: 200,
-      time: "15 minutes ago",
-      duration: "210ms",
-    },
-    {
-      id: 5,
-      endpoint: "/api/products/12",
-      method: "GET",
-      status: 404,
-      time: "20 minutes ago",
-      duration: "45ms",
-    },
-    {
-      id: 6,
-      endpoint: "/api/users",
-      method: "POST",
-      status: 201,
-      time: "25 minutes ago",
-      duration: "189ms",
-    },
-    {
-      id: 7,
-      endpoint: "/api/webhooks/stripe",
-      method: "POST",
-      status: 500,
-      time: "30 minutes ago",
-      duration: "320ms",
-    },
-    {
-      id: 8,
-      endpoint: "/api/users/2",
-      method: "PUT",
-      status: 200,
-      time: "35 minutes ago",
-      duration: "156ms",
-    },
-    {
-      id: 9,
-      endpoint: "/api/users/3",
-      method: "DELETE",
-      status: 200,
-      time: "40 minutes ago",
-      duration: "98ms",
-    },
-    {
-      id: 10,
-      endpoint: "/api/products/search",
-      method: "GET",
-      status: 200,
-      time: "45 minutes ago",
-      duration: "145ms",
-    },
-  ])
+  const [requests,setRequests] = useState<Request[]>([])
+
+  const timeExtractor = (time: string) => {
+    const date = new Date(time)
+    const curr = new Date()
+    const dif = curr.getTime() - date.getTime()
+    const min = Math.floor(dif / 60000)
+    const hours = Math.floor(min / 60)
+    const res = hours > 0 ? `${hours} hours ago` : `${min} minutes ago`
+    return res
+
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`http://localhost:4000/api/v1/requestLog/last24Hours`,{withCredentials: true})
+        console.log(res)  
+        setRequests(res.data.data)
+      } catch (error) {
+        
+      }
+    }
+    fetchData()
+  },[])
+
+  useEffect(() => {
+    console.log(requests)
+  },[requests])
+
+  const getMethodColor = (method: string) => {
+    switch (method) {
+      case "GET":
+        return "bg-blue-500/10 text-blue-500"
+      case "POST":
+        return "bg-green-500/10 text-green-500"
+      case "PUT":
+        return "bg-yellow-500/10 text-yellow-500"
+      case "DELETE":
+        return "bg-red-500/10 text-red-500"
+      default:
+        return "bg-gray-500/10 text-gray-500"
+    }
+  }
 
   return (
-    <ScrollArea className="h-[300px]">
+    <ScrollArea className="h-[350px]">
       <div className="space-y-2">
         {requests.map((request) => (
-          <div key={request.id} className="flex items-center justify-between rounded-md border p-2">
-            <div className="flex flex-col">
+          <div key={request.id} className="group relative rounded-lg border p-4 hover:shadow-md transition-all">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Badge
-                  variant={request.method === "GET" ? "default" : request.method === "POST" ? "secondary" : "outline"}
-                >
-                  {request.method}
-                </Badge>
-                <span className="font-medium">{request.endpoint}</span>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getMethodColor(request.type)}`}>
+                  {request.type}
+                </span>
+                <span className="font-mono text-sm">{request.requestUrl}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Clock className="h-3 w-3" />
-                <span>{request.time}</span>
+                <User className="h-3 w-3" />
+                <span>{request.userId}</span>
                 <span>•</span>
-                <span>{request.duration}</span>
+                <Clock className="h-3 w-3" />
+                <span>{formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })}</span>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge
-                variant={
-                  request.status >= 200 && request.status < 300
-                    ? "default"
-                    : request.status >= 400 && request.status < 500
-                      ? "outline"
-                      : "destructive"
-                }
-              >
-                {request.status}
-                {request.status >= 200 && request.status < 300 ? (
-                  <Check className="ml-1 h-3 w-3" />
-                ) : (
-                  <X className="ml-1 h-3 w-3" />
-                )}
-              </Badge>
-            </div>
+            <Badge variant={request.statusCode < 400 ? "default" : "destructive"}>{request.statusCode}</Badge>
           </div>
+          <div className="mt-2 text-sm text-muted-foreground">
+            <p>{request.response.message}</p>
+          </div>
+          <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+            <Activity className="h-3 w-3" />
+            <span>{request.duration}ms</span>
+          </div>
+        </div>
         ))}
       </div>
     </ScrollArea>

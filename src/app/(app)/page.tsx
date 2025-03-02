@@ -37,7 +37,6 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         const res: any = await axios.get(`http://localhost:4000/api/v1/requestLog/allData`,{withCredentials: true})
-        console.log(res)
         setStats(res.data.data)
       } catch (error) {
         console.log(error)

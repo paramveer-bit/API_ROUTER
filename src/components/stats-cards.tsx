@@ -31,7 +31,6 @@ export function StatsCards({param}: {param: Data}) {
           <Globe className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-
           <div className="text-2xl font-bold ml-2">{param.requests.this_month}</div>
           <div className="mt-8 flex items-center text-sm">
             {isIncrease?<ArrowUp className="mr-1 h-4 w-4 text-green-600" />:<ArrowDown className="mr-1 h-4 w-4 text-red-500" />}
