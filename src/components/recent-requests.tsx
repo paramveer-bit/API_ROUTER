@@ -27,32 +27,15 @@ interface Request {
   userId : string
 }
 
-// id: 1,
-// endpoint: "/api/users",
-// method: "GET",
-// status: 200,
-// time: "2 minutes ago",
-// duration: "89ms",
-
 export function RecentRequests() {
   const [requests,setRequests] = useState<Request[]>([])
 
-  const timeExtractor = (time: string) => {
-    const date = new Date(time)
-    const curr = new Date()
-    const dif = curr.getTime() - date.getTime()
-    const min = Math.floor(dif / 60000)
-    const hours = Math.floor(min / 60)
-    const res = hours > 0 ? `${hours} hours ago` : `${min} minutes ago`
-    return res
-
-  }
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await axios.get(`http://localhost:4000/api/v1/requestLog/last24Hours`,{withCredentials: true})
-        console.log(res)  
         setRequests(res.data.data)
       } catch (error) {
         
@@ -61,9 +44,7 @@ export function RecentRequests() {
     fetchData()
   },[])
 
-  useEffect(() => {
-    console.log(requests)
-  },[requests])
+
 
   const getMethodColor = (method: string) => {
     switch (method) {

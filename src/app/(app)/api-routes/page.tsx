@@ -145,7 +145,7 @@ export default function DelayedRequests() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Delayed Requests</h1>
+      <h1 className="text-2xl font-bold mb-4">API Routes</h1>
       <div className="space-y-4">
         {requests.map((request) => (
           <div

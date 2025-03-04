@@ -60,8 +60,10 @@ export default function DashboardPage() {
               <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList> */}
             <TabsContent value="overview" className="space-y-4">
+              {/* ----------------------------------------- Status cards----------------------------------------- */}
               {stats ? <StatsCards param={stats} /> : <p>Loading...</p>}
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+              {/* ---------------------------------------Recent Api requests--------------------------------------------- */}
                 <Card className="lg:col-span-4">
                   <CardHeader>
                     <CardTitle>Recent API Requests</CardTitle>
@@ -71,6 +73,7 @@ export default function DashboardPage() {
                     <RecentRequests />
                   </CardContent>
                 </Card>
+              {/* ----------------------------------------Active Routes-------------------------------------------------- */}
                 <Card className="lg:col-span-3">
                   <CardHeader>
                     <CardTitle>API Routes</CardTitle>
