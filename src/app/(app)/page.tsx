@@ -10,6 +10,7 @@ import { RecentRequests } from "@/components/recent-requests"
 import { StatsCards } from "@/components/stats-cards"
 import { useEffect, useState } from "react"
 import axios from "axios"
+import { useRouter } from "next/navigation"
 
 interface Data {
   total_users: {
@@ -31,7 +32,7 @@ interface Data {
 
 export default function DashboardPage() {
   const[stats, setStats] = useState<Data>()
-
+  const router = useRouter()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,7 +84,7 @@ export default function DashboardPage() {
                     <ApiRoutesList />
                   </CardContent>
                   <CardFooter>
-                    <Button className="w-full">
+                    <Button className="w-full" onClick={() => router.push("/add-new-routes")}>
                       <GitFork className="mr-2 h-4 w-4" />
                       Create New Route
                     </Button>
@@ -91,7 +92,7 @@ export default function DashboardPage() {
                 </Card>
               </div>
             </TabsContent>
-            <TabsContent value="routes" className="space-y-4">
+            {/* <TabsContent value="routes" className="space-y-4">
               <Card>
                 <CardHeader>
                   <CardTitle>API Routes</CardTitle>
@@ -123,7 +124,7 @@ export default function DashboardPage() {
                   <p>Settings content will be displayed here.</p>
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabsContent> */}
           </Tabs>
         </main>
   )

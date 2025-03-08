@@ -4,70 +4,70 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Check, ChevronRight, Code, Globe, Plus, Save } from "lucide-react"
+import {Code,  Save } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { RoutePreview } from "@/components/route-preview"
-import { ParameterForm } from "@/components/parameter-form"
+import { useToast } from "@/hooks/use-toast"
+import axios from "axios"
 
 export default function AddNewRoutePage() {
   const [routePath, setRoutePath] = useState("")
   const [forwardRoute, setForwardRoute] = useState("")
-  const [parameters, setParameters] = useState<{ id: number; name: string; type: string; required: boolean }[]>([])
-  const [requiresAuth, setRequiresAuth] = useState(false)
   const [rateLimit, setRateLimit] = useState(100)
   const [cacheEnabled, setCacheEnabled] = useState(false)
-  const [responseFormat, setResponseFormat] = useState("json")
+
+  const {toast} = useToast()
 
 
 
-  const addParameter = () => {
-    setParameters([
-      ...parameters,
-      {
-        id: Date.now(),
-        name: "",
-        type: "string",
-        required: true,
-      },
-    ])
-  }
-
-  const removeParameter = (id: number) => {
-    setParameters(parameters.filter((param) => param.id !== id))
-  }
-
-  const updateParameter = (id: number, field: string, value: string | boolean) => {
-    setParameters(parameters.map((param) => (param.id === id ? { ...param, [field]: value } : param)))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Here you would typically send this data to your API
-    const newRoute = {
-      path: routePath,
-      parameters,
-      requiresAuth,
-      rateLimit,
-      cacheEnabled,
-      responseFormat,
+    if(!routePath || !forwardRoute) {
+
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+      })
+      return
     }
 
-    console.log("New route configuration:", newRoute)
-    // You would add API call here to save the route
+    const newRoute = {
+      requestUrl : routePath,
+      forwardUrl : forwardRoute,
+      rateLimiting : true,
+      defaultRate : rateLimit,
+      caching : true,
+      cacheTime : 60
+    }
 
-    // For demo purposes, show an alert
-    alert("Route added successfully!")
+    console.log(newRoute)
+    try {
+      const res =  await axios.post("http://localhost:4000/api/v1/request/addnew",newRoute,{withCredentials: true})
+      console.log(res)
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add new route",
+      })
+      return
+    }
+    // Here you would typically send this data to your API
+    toast({
+      title: "Success",
+      description: "New route added successfully"
+    })
+    setRateLimit(100)
+    setRoutePath("")
+    setForwardRoute("")
+    setCacheEnabled(false)
+
   }
 
   return (
@@ -83,7 +83,9 @@ export default function AddNewRoutePage() {
                 <Card className="mb-6" id="basic-info">
                   <CardHeader>
                     <CardTitle>Basic Information</CardTitle>
-                    <CardDescription>Define the core details of your API route</CardDescription>
+                    <CardDescription>
+                      Define the core details of your API route
+                    </CardDescription>
                   </CardHeader>
 
                   {/* Requested route ------------------------------------------------------- */}
@@ -91,7 +93,7 @@ export default function AddNewRoutePage() {
                     <div className="space-y-2">
                       <Label htmlFor="route-path">Requested Path</Label>
                       <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">/api/</span>
+                        <span className="text-muted-foreground">{`{BaseUrl}`}/</span>
                         <Input
                           id="route-path"
                           placeholder="users/[id]"
@@ -101,7 +103,7 @@ export default function AddNewRoutePage() {
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        All query paremetes and path parameters will be forwared as same as the original request 
+                        All path parameters should be added in square barckets like [id]
                       </p>
                     </div>
                     {/* Forwarded route ------------------------------------------------------- */}
@@ -109,7 +111,6 @@ export default function AddNewRoutePage() {
                     <div className="space-y-2">
                       <Label htmlFor="forwardRoute">Forwarded Path</Label>
                       <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">/api/</span>
                         <Input
                           id="forwardRoute"
                           placeholder="users/[id]"
@@ -119,7 +120,7 @@ export default function AddNewRoutePage() {
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        All query paremetes and path parameters will be forwared as same as the original request 
+                        All path parameters should be added in square barckets like [id]
                       </p>
                     </div>
 
@@ -270,8 +271,6 @@ export default function AddNewRoutePage() {
                 <CardContent>
                   <RoutePreview
                     path={routePath}
-                    parameters={parameters}
-                    requiresAuth={requiresAuth}
                   />
                 </CardContent>
                 <CardFooter>

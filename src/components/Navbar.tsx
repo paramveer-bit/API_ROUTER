@@ -13,7 +13,7 @@ import {
 function Navbar() {
   return (
     <nav className="grid gap-2 p-4 text-sm">
-      <Link href="#" className="flex items-center gap-3 rounded-lg bg-primary px-3 py-2 text-primary-foreground">
+      <Link href="/" className="flex items-center gap-3 rounded-lg bg-primary px-3 py-2 text-primary-foreground">
         <LayoutDashboard className="h-4 w-4" />
           Dashboard
       </Link>
