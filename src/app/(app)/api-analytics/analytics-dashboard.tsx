@@ -6,8 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import ApiUsageChart from "./(charts)/api-usage-chart"
 import EndpointBreakdown from "./(charts)/endpoint-breakdown"
-import ResponseTimeChart from "./response-time-chart"
-import StatusCodesChart from "./status-codes-chart"
+import ResponseTimeChart from "./(charts)/response-time-chart"
+import StatusCodesChart from "./(charts)/status-codes-chart"
 import RouteAnalysisChart from "./route-analysis-chart"
 import UserAnalysisChart from "./user-analysis-chart"
 import GeographicDistribution from "./geographic-distribution"
@@ -136,7 +136,8 @@ export default function AnalyticsDashboard() {
           <TabsTrigger value="status-codes">Status Codes</TabsTrigger>
           <TabsTrigger value="user-analysis">User Analysis</TabsTrigger>
         </TabsList>
-
+        
+        {/* API Request Usage Overview */}
         <TabsContent value="usage" className="mt-6">
           <Card>
             <CardHeader>
@@ -151,6 +152,7 @@ export default function AnalyticsDashboard() {
           </Card>
         </TabsContent>
 
+        {/* EndPoint BreakDown */}
         <TabsContent value="endpoints" className="mt-6">
           <Card>
             <CardHeader>
@@ -164,6 +166,8 @@ export default function AnalyticsDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Response Time */}
         <TabsContent value="response-time" className="mt-6">
           <Card>
             <CardHeader>
@@ -172,11 +176,13 @@ export default function AnalyticsDashboard() {
             </CardHeader>
             <CardContent>
               <div className="h-[400px]">
-                <ResponseTimeChart data={data?.responseTimeData || []} />
+                <ResponseTimeChart timeRange={timeRange} />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Ststus Code Chart */}
         <TabsContent value="status-codes" className="mt-6">
           <Card>
             <CardHeader>
@@ -185,11 +191,12 @@ export default function AnalyticsDashboard() {
             </CardHeader>
             <CardContent>
               <div className="h-[400px]">
-                <StatusCodesChart data={data?.statusCodeData || []} />
+                <StatusCodesChart timeRange={timeRange} />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
+        
         <TabsContent value="user-analysis" className="mt-6">
           <Card>
             <CardHeader>
