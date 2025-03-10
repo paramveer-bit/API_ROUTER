@@ -1,24 +1,41 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import ApiUsageChart from "./(charts)/api-usage-chart"
-import EndpointBreakdown from "./endpoint-breakdown"
+import EndpointBreakdown from "./(charts)/endpoint-breakdown"
 import ResponseTimeChart from "./response-time-chart"
-import StatusCodesChart from "./(charts)/status-codes-chart"
+import StatusCodesChart from "./status-codes-chart"
 import RouteAnalysisChart from "./route-analysis-chart"
-import UserAnalysisChart from "./(charts)/user-analysis-chart"
+import UserAnalysisChart from "./user-analysis-chart"
 import GeographicDistribution from "./geographic-distribution"
 import { useApiAnalytics } from "./use-api-analytics"
 import { Button } from "@/components/ui/button"
 import { RefreshCw } from "lucide-react"
+import axios from "axios"
+import Overview from "@/components/usage-overview"
 
 export default function AnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState<"24h" | "7d" | "30d" | "90d">("7d")
   const [selectedRoute, setSelectedRoute] = useState<string>("/api/users")
   const { data, isLoading, error, refetch } = useApiAnalytics(timeRange, selectedRoute)
+  
+  const [routes,setRoutes] = useState<any[]>([])
+  useEffect(()=>{
+    const fetching = async () => {
+      try {
+        const res = await axios.get(`http://localhost:4000/api/v1/request/getall`, {withCredentials: true})
+        console.log(res.data.data)
+        setRoutes(res.data.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetching()
+  }
+  ,[])
 
   if (isLoading) {
     return (
@@ -37,6 +54,9 @@ export default function AnalyticsDashboard() {
       </Card>
     )
   }
+
+  console.log(data)
+  
 
   return (
     <div className="space-y-6">
@@ -62,66 +82,10 @@ export default function AnalyticsDashboard() {
         </div>
       </div>
 
-      {data?.requestsChange &&
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Total Requests</CardDescription>
-              <CardTitle className="text-3xl">{data?.totalRequests.toLocaleString()}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className={`text-sm flex items-center ${data?.requestsChange >= 0 ? "text-green-500" : "text-red-500"}`}
-              >
-                {data?.requestsChange >= 0 ? "↑" : "↓"} {Math.abs(data?.requestsChange || 0)}% from previous period
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Average Response Time</CardDescription>
-              <CardTitle className="text-3xl">{data?.avgResponseTime} ms</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className={`text-sm flex items-center ${data?.responseTimeChange <= 0 ? "text-green-500" : "text-red-500"}`}
-              >
-                {data?.responseTimeChange <= 0 ? "↓" : "↑"} {Math.abs(data?.responseTimeChange || 0)}% from previous
-                period
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Error Rate</CardDescription>
-              <CardTitle className="text-3xl">{data?.errorRate}%</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className={`text-sm flex items-center ${data?.errorRateChange <= 0 ? "text-green-500" : "text-red-500"}`}
-              >
-                {data?.errorRateChange <= 0 ? "↓" : "↑"} {Math.abs(data?.errorRateChange || 0)}% from previous period
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Active Users</CardDescription>
-              <CardTitle className="text-3xl">{data?.activeUsers.toLocaleString()}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className={`text-sm flex items-center ${data?.activeUsersChange >= 0 ? "text-green-500" : "text-red-500"}`}
-              >
-                {data?.activeUsersChange >= 0 ? "↑" : "↓"} {Math.abs(data?.activeUsersChange || 0)}% from previous period
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      }
+      <Overview timeRange={timeRange} />
       {/* Route-specific analysis section */}
       <Card>
+        {/* Route Selector */}
         <CardHeader>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
@@ -142,6 +106,7 @@ export default function AnalyticsDashboard() {
             </Select>
           </div>
         </CardHeader>
+
         <CardContent>
           <div className="h-[400px]">
             <RouteAnalysisChart data={data?.routeAnalysisData || []} route={selectedRoute} />
@@ -171,6 +136,7 @@ export default function AnalyticsDashboard() {
           <TabsTrigger value="status-codes">Status Codes</TabsTrigger>
           <TabsTrigger value="user-analysis">User Analysis</TabsTrigger>
         </TabsList>
+
         <TabsContent value="usage" className="mt-6">
           <Card>
             <CardHeader>
@@ -179,11 +145,12 @@ export default function AnalyticsDashboard() {
             </CardHeader>
             <CardContent>
               <div className="h-[400px]">
-                <ApiUsageChart data={data?.usageData || []} />
+                <ApiUsageChart timeRange={timeRange} />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
+
         <TabsContent value="endpoints" className="mt-6">
           <Card>
             <CardHeader>
@@ -192,7 +159,7 @@ export default function AnalyticsDashboard() {
             </CardHeader>
             <CardContent>
               <div className="h-[400px]">
-                <EndpointBreakdown data={data?.endpointData || []} />
+                <EndpointBreakdown timeRange={timeRange} />
               </div>
             </CardContent>
           </Card>

@@ -7,47 +7,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { ApiRoutesList } from "@/components/api-routes-list"
 import { RecentRequests } from "@/components/recent-requests"
-import { StatsCards } from "@/components/stats-cards"
-import { useEffect, useState } from "react"
 import axios from "axios"
 import { useRouter } from "next/navigation"
+import Overview from "@/components/usage-overview"
 
-interface Data {
-  total_users: {
-    total_user: number
-  },
-  routes : {
-    total_routes : number,
-    increase : number
-  },
-  active_user : {
-    total_active_user: number
-  },
-  requests : {
-    this_month: number,
-    prev_month: number
-  }
-}
+
+
 
 
 export default function DashboardPage() {
-  const[stats, setStats] = useState<Data>()
   const router = useRouter()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res: any = await axios.get(`http://localhost:4000/api/v1/requestLog/allData`,{withCredentials: true})
-        setStats(res.data.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchData()
-    console.log("Hello from the Dashboard page!")
-  }
-  , [])
-
+  
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex items-center gap-4">
@@ -62,7 +33,7 @@ export default function DashboardPage() {
             </TabsList> */}
             <TabsContent value="overview" className="space-y-4">
               {/* ----------------------------------------- Status cards----------------------------------------- */}
-              {stats ? <StatsCards param={stats} /> : <p>Loading...</p>}
+              <Overview timeRange="30d"/>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               {/* ---------------------------------------Recent Api requests--------------------------------------------- */}
                 <Card className="lg:col-span-4">

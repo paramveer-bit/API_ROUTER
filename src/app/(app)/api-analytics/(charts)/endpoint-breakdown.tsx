@@ -2,17 +2,29 @@
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { useEffect, useState } from "react"
+import axios from "axios"
 
 interface EndpointData {
   endpoint: string
   requests: number
 }
 
-interface EndpointBreakdownProps {
-  data: EndpointData[]
-}
 
-export default function EndpointBreakdown({ data }: EndpointBreakdownProps) {
+export default function EndpointBreakdown({timeRange}:{timeRange: string}) {
+  const [data,setData] = useState<EndpointData[]>()
+  useEffect(()=>{
+    const fetching = async () => {
+      try {
+        const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
+        const res = await axios.get(`http://localhost:4000/api/v1/requestLog/end-point-utilization?days=${days}`, {withCredentials: true})
+        setData(res.data.data)
+      } catch (error) {
+        
+      }
+    }
+    fetching()
+  },[])
   return (
     <ChartContainer
       config={{
