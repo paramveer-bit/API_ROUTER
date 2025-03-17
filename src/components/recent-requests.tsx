@@ -27,7 +27,7 @@ interface Request {
   userId : string
 }
 
-export function RecentRequests() {
+export function RecentRequests({type,user_code} : {type: string,user_code: string|null}) {
   const [requests,setRequests] = useState<Request[]>([])
 
   
@@ -35,14 +35,19 @@ export function RecentRequests() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:4000/api/v1/requestLog/last24Hours`,{withCredentials: true})
+        if(type=='user'){
+          const res = await axios.get(`http://localhost:4000/api/v1/requestLog/userLast5Min?user_code=${user_code}`,{withCredentials: true})
+          setRequests(res.data.data)
+          return
+        }
+        const res = await axios.get(`http://localhost:4000/api/v1/requestLog/last5Min`,{withCredentials: true})
         setRequests(res.data.data)
       } catch (error) {
         
       }
     }
     fetchData()
-  },[])
+  },[user_code])
 
 
 

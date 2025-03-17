@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import { RefreshCw } from "lucide-react"
 import axios from "axios"
 import Overview from "@/components/usage-overview"
+import { RecentRequests } from "@/components/recent-requests"
 
 export default function AnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState<"24h" | "7d" | "30d" | "90d">("7d")
@@ -82,7 +83,7 @@ export default function AnalyticsDashboard() {
         </div>
       </div>
 
-      <Overview timeRange={timeRange} />
+      <Overview timeRange={timeRange} dataTemp={null}/>
       {/* Route-specific analysis section */}
       <Card>
         {/* Route Selector */}
@@ -238,32 +239,7 @@ export default function AnalyticsDashboard() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {data?.realtimeActivity.map((activity, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-muted/40 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`h-2 w-2 rounded-full ${
-                      activity.statusCode >= 200 && activity.statusCode < 300
-                        ? "bg-green-500"
-                        : activity.statusCode >= 300 && activity.statusCode < 400
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
-                    }`}
-                  ></div>
-                  <div>
-                    <div className="font-medium">
-                      {activity.method} {activity.route}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {activity.ip} • {activity.responseTime}ms • {new Date(activity.timestamp).toLocaleTimeString()}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-sm font-medium">{activity.statusCode}</div>
-              </div>
-            ))}
-          </div>
+          <RecentRequests type="all" user_code={null} />
         </CardContent>
       </Card>
     </div>

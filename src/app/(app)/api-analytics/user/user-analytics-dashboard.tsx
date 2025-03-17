@@ -2,7 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import Usage from "@/components/usage-overview"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -10,18 +11,57 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useUserAnalytics } from "./use-user-analytics"
-import UserActivityChart from "./user-activity-chart"
-import UserEndpointsChart from "./user-endpoints-chart"
-import UserDevicesChart from "./user-devices-chart"
+import UserActivityChart from "./(user-charts)/user-activity-chart"
+import UserEndpointsChart from "./(user-charts)/user-endpoints-chart"
+import UserDevicesChart from "./(user-charts)/user-devices-chart"
 import UserSessionsTable from "./user-sessions-table"
 import { Download, RefreshCw, Search, User } from "lucide-react"
+import axios from "axios"
+import { useToast } from "@/hooks/use-toast"
+import { RecentRequests } from "@/components/recent-requests"
+
 
 export default function UserAnalyticsDashboard() {
   const [userCode, setUserCode] = useState("")
   const [searchedUserCode, setSearchedUserCode] = useState("")
   const [timeRange, setTimeRange] = useState<"24h" | "7d" | "30d" | "90d">("7d")
+  const [error,setError] = useState<Error | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState<any>(null)
 
-  const { data, isLoading, error, refetch } = useUserAnalytics(searchedUserCode, timeRange)
+  const {toast} = useToast()
+  // const { data, isLoading, error, refetch } = useUserAnalytics(searchedUserCode, timeRange)
+
+  const fetch = async () => {
+    setIsLoading(true)
+    try {
+      const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
+
+      const res = await axios.get(`http://localhost:4000/api/v1/requestLog/userDetailsByDays?user_code=${searchedUserCode}&days=${days}`, {withCredentials: true})
+      setData(res.data.data)
+      console.log(res.data.data)
+      setError(null)
+    } catch (error:any) {
+      setData(null)
+      console.log(error)
+      setError(error.response.data.message)
+      toast({
+        title: "Error",
+        description: error.response.data.message,
+        variant : "destructive"
+      })
+    } finally{
+      setIsLoading(false)
+    }
+  }
+
+  
+
+  useEffect (()=>{
+    console.log("searchedUserCode", searchedUserCode)
+    fetch()
+  },[searchedUserCode,timeRange])
+
 
   const handleSearch = () => {
     if (userCode.trim()) {
@@ -58,6 +98,7 @@ export default function UserAnalyticsDashboard() {
           <CardTitle>User Analytics</CardTitle>
           <CardDescription>Enter a user code to view detailed analytics for a specific user</CardDescription>
         </CardHeader>
+        {/* Search bar, Range Selector, Export button, Search Button */}
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
@@ -87,7 +128,7 @@ export default function UserAnalyticsDashboard() {
                   </SelectContent>
                 </Select>
 
-                <Button variant="outline" size="icon" onClick={() => refetch()}>
+                <Button variant="outline" size="icon" onClick={() => fetch()}>
                   <RefreshCw className="h-4 w-4" />
                   <span className="sr-only">Refresh data</span>
                 </Button>
@@ -119,6 +160,7 @@ export default function UserAnalyticsDashboard() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="md:col-span-3">
+              {/* User Profile Details */}
               <CardHeader className="pb-2">
                 <CardDescription>User Profile</CardDescription>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -126,61 +168,32 @@ export default function UserAnalyticsDashboard() {
                     <div className="bg-primary/10 p-3 rounded-full">
                       <User className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle>{data.userProfile.name}</CardTitle>
+                    <CardTitle>{"temp name"}</CardTitle>
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    <div className="bg-muted px-3 py-1 rounded-full text-sm">ID: {data.userProfile.id}</div>
-                    <div className="bg-muted px-3 py-1 rounded-full text-sm">Email: {data.userProfile.email}</div>
+                    <div className="bg-muted px-3 py-1 rounded-full text-sm">ID: {data.userDetails.userId}</div>
+                    <div className="bg-muted px-3 py-1 rounded-full text-sm">Email: {"temp@gmail.com"}</div>
                     <div className="bg-muted px-3 py-1 rounded-full text-sm">
-                      Joined: {new Date(data.userProfile.joinedAt).toLocaleDateString()}
+                      Joined: {new Date(data.userDetails.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
               </CardHeader>
+              {/* User API Usage Overview */}
               <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                  <div className="bg-muted/40 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Total Requests</h3>
-                    <p className="text-2xl font-semibold">{data.totalRequests.toLocaleString()}</p>
-                    <p className={`text-xs mt-1 ${data.requestsChange >= 0 ? "text-green-500" : "text-red-500"}`}>
-                      {data.requestsChange >= 0 ? "↑" : "↓"} {Math.abs(data.requestsChange)}% from previous period
-                    </p>
-                  </div>
-                  <div className="bg-muted/40 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Avg. Response Time</h3>
-                    <p className="text-2xl font-semibold">{data.avgResponseTime} ms</p>
-                    <p className={`text-xs mt-1 ${data.responseTimeChange <= 0 ? "text-green-500" : "text-red-500"}`}>
-                      {data.responseTimeChange <= 0 ? "↓" : "↑"} {Math.abs(data.responseTimeChange)}% from previous
-                      period
-                    </p>
-                  </div>
-                  <div className="bg-muted/40 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Error Rate</h3>
-                    <p className="text-2xl font-semibold">{data.errorRate}%</p>
-                    <p className={`text-xs mt-1 ${data.errorRateChange <= 0 ? "text-green-500" : "text-red-500"}`}>
-                      {data.errorRateChange <= 0 ? "↓" : "↑"} {Math.abs(data.errorRateChange)}% from previous period
-                    </p>
-                  </div>
-                  <div className="bg-muted/40 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Active Sessions</h3>
-                    <p className="text-2xl font-semibold">{data.activeSessions}</p>
-                    <p className={`text-xs mt-1 ${data.sessionsChange >= 0 ? "text-green-500" : "text-red-500"}`}>
-                      {data.sessionsChange >= 0 ? "↑" : "↓"} {Math.abs(data.sessionsChange)}% from previous period
-                    </p>
-                  </div>
-                </div>
+                <Usage timeRange={null} dataTemp={data}/>
               </CardContent>
             </Card>
           </div>
 
           <Tabs defaultValue="activity">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-3">
               <TabsTrigger value="activity">Activity</TabsTrigger>
               <TabsTrigger value="endpoints">Endpoints</TabsTrigger>
               <TabsTrigger value="devices">Devices</TabsTrigger>
-              <TabsTrigger value="sessions">Sessions</TabsTrigger>
             </TabsList>
 
+            {/* User Activity Chart */}
             <TabsContent value="activity" className="mt-6">
               <Card>
                 <CardHeader>
@@ -189,10 +202,10 @@ export default function UserAnalyticsDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-[400px]">
-                    <UserActivityChart data={data.activityData} />
+                    <UserActivityChart timeRange={timeRange} searchedUserCode={searchedUserCode} />
                   </div>
                 </CardContent>
-                <CardFooter className="text-sm text-muted-foreground">
+                {/* <CardFooter className="text-sm text-muted-foreground">
                   {data.anomalyDetection.hasAnomaly ? (
                     <Alert className="w-full">
                       <AlertTitle>Anomaly Detected</AlertTitle>
@@ -201,10 +214,11 @@ export default function UserAnalyticsDashboard() {
                   ) : (
                     "No unusual activity patterns detected in this time period."
                   )}
-                </CardFooter>
+                </CardFooter> */}
               </Card>
             </TabsContent>
 
+            {/* {Api Endpoint Usage-------------------------------------} */}
             <TabsContent value="endpoints" className="mt-6">
               <Card>
                 <CardHeader>
@@ -213,12 +227,13 @@ export default function UserAnalyticsDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-[400px]">
-                    <UserEndpointsChart data={data.endpointData} />
+                    <UserEndpointsChart timeRange={timeRange} searchedUserCode={searchedUserCode} />
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
+            {/* Device and browser pie chart */}
             <TabsContent value="devices" className="mt-6">
               <Card>
                 <CardHeader>
@@ -230,13 +245,13 @@ export default function UserAnalyticsDashboard() {
                     <div>
                       <h3 className="text-lg font-medium mb-4">Devices</h3>
                       <div className="h-[300px]">
-                        <UserDevicesChart data={data.deviceData} type="device" />
+                        <UserDevicesChart timeRange={timeRange} searchedUserCode={searchedUserCode} type="device" />
                       </div>
                     </div>
                     <div>
                       <h3 className="text-lg font-medium mb-4">Browsers</h3>
                       <div className="h-[300px]">
-                        <UserDevicesChart data={data.browserData} type="browser" />
+                        <UserDevicesChart timeRange={timeRange} searchedUserCode={searchedUserCode} type="browser" />
                       </div>
                     </div>
                   </div>
@@ -244,53 +259,26 @@ export default function UserAnalyticsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="sessions" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Session History</CardTitle>
-                  <CardDescription>Recent user sessions and activity</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <UserSessionsTable data={data.sessionData} />
-                </CardContent>
-              </Card>
-            </TabsContent>
           </Tabs>
 
+                  
           <Card>
-            <CardHeader>
-              <CardTitle>Recent API Requests</CardTitle>
-              <CardDescription>Last 5 API requests made by this user</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {data.recentRequests.map((request, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-muted/40 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`h-2 w-2 rounded-full ${
-                          request.statusCode >= 200 && request.statusCode < 300
-                            ? "bg-green-500"
-                            : request.statusCode >= 300 && request.statusCode < 400
-                              ? "bg-yellow-500"
-                              : "bg-red-500"
-                        }`}
-                      ></div>
-                      <div>
-                        <div className="font-medium">
-                          {request.method} {request.endpoint}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {new Date(request.timestamp).toLocaleString()} • {request.responseTime}ms
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-sm font-medium">{request.statusCode}</div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Real-time Monitoring</CardTitle>
+              <CardDescription>Live API activity in the last 5 minutes</CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-green-500"></div>
+              <span className="text-sm text-muted-foreground">Live</span>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <RecentRequests type="user" user_code={searchedUserCode}/>
+        </CardContent>
+      </Card>
         </>
       )}
 

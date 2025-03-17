@@ -33,7 +33,7 @@ export default function DashboardPage() {
             </TabsList> */}
             <TabsContent value="overview" className="space-y-4">
               {/* ----------------------------------------- Status cards----------------------------------------- */}
-              <Overview timeRange="30d"/>
+              <Overview timeRange="30d" dataTemp={null}/>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               {/* ---------------------------------------Recent Api requests--------------------------------------------- */}
                 <Card className="lg:col-span-4">

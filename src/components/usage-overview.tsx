@@ -18,28 +18,37 @@ interface Data {
         change: number
         total: number
     },
-    users : {
+    users?: {
+        change: number
+        total: number
+    },
+    
+    active_days?:{
         change: number
         total: number
     }
 }
 
 
-function Usage({timeRange}:{timeRange: string}) {
+function Usage({timeRange,dataTemp}:{timeRange: string|null,dataTemp: Data|null}) {
     const [data, setData] = useState<Data>()
-
     useEffect(()=>{
-        const fetching = async () => {
-          try {
-            const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
-            const res = await axios.get(`http://localhost:4000/api/v1/requestLog/DataByDays?days=${days}`, {withCredentials: true})
-            setData(res.data.data)
-          } catch (error) {
-            
-          }
+        if(dataTemp){
+            setData(dataTemp)
         }
-        fetching()
-    },[timeRange])
+        else{
+          const fetching = async () => {
+            try {
+              const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
+              const res = await axios.get(`http://localhost:4000/api/v1/requestLog/DataByDays?days=${days}`, {withCredentials: true})
+              setData(res.data.data)
+            } catch (error) {
+              
+            }
+          }
+          fetching()
+        }
+    },[timeRange,dataTemp])
 
     if(data==null){
         return (
@@ -91,10 +100,12 @@ function Usage({timeRange}:{timeRange: string}) {
               </div>
             </CardContent>
         </Card>
-        <Card>
+        {data.users !== null && data.users?.total !==null && data.users?.change &&
+          <Card>
             <CardHeader className="pb-2">
               <CardDescription>Active Users</CardDescription>
-              <CardTitle className="text-3xl">{data?.users.total.toFixed(2).toLocaleString()}</CardTitle>
+              <CardTitle className="text-3xl">{
+                data?.users.total.toFixed(2).toLocaleString()}</CardTitle>
             </CardHeader>
             <CardContent>
               <div
@@ -103,7 +114,25 @@ function Usage({timeRange}:{timeRange: string}) {
                 {data?.users.change >= 0 ? "↑" : "↓"} {Math.abs(data?.users.change || 0).toFixed(2)}% from previous period
               </div>
             </CardContent>
-        </Card>
+          </Card> 
+        }
+        {(data.active_days !== null && data.active_days?.total !==undefined && data.active_days?.change!==undefined) &&
+        
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription>Active Sessions</CardDescription>
+              <CardTitle className="text-3xl">{
+                data?.active_days.total.toFixed(2).toLocaleString()}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div
+                className={`text-sm flex items-center ${data?.active_days.change >= 0 ? "text-green-500" : "text-red-500"}`}
+              >
+                {data?.active_days.change >= 0 ? "↑" : "↓"} {Math.abs(data?.active_days.change || 0).toFixed(2)}% from previous period
+              </div>
+            </CardContent>
+          </Card>
+        }
     </div>
   )
 }
