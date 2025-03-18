@@ -2,8 +2,10 @@
 
 import { Line, LineChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { useEffect, useState } from "react"
+import axios from "axios"
 
-interface RouteAnalysisData {
+interface ActivityData {
   timestamp: string
   requests: number
   responseTime: number
@@ -11,11 +13,36 @@ interface RouteAnalysisData {
 }
 
 interface RouteAnalysisChartProps {
-  data: RouteAnalysisData[]
-  route: string
+  timeRange : string,
+  id : string
 }
 
-export default function RouteAnalysisChart({ data, route }: RouteAnalysisChartProps) {
+export default function RouteAnalysisChart({ timeRange,id }: RouteAnalysisChartProps) {
+
+  const [data,setData] = useState<ActivityData[] | null>(null)
+  const deviceDataFetch = async () =>{
+    try {
+      const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
+      const res = await axios.get(`http://localhost:4000/api/v1/requestLog/routeSpecificData?routeId=${id}&days=${days}`, {withCredentials: true})
+      setData(res.data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    deviceDataFetch()
+  }
+  ,[id,timeRange])
+
+  if(data==null){
+    return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+    )
+  }
+
   return (
     <ChartContainer
       config={{

@@ -8,10 +8,7 @@ import ApiUsageChart from "./(charts)/api-usage-chart"
 import EndpointBreakdown from "./(charts)/endpoint-breakdown"
 import ResponseTimeChart from "./(charts)/response-time-chart"
 import StatusCodesChart from "./(charts)/status-codes-chart"
-import RouteAnalysisChart from "./route-analysis-chart"
-import UserAnalysisChart from "./user-analysis-chart"
-import GeographicDistribution from "./geographic-distribution"
-import { useApiAnalytics } from "./use-api-analytics"
+import RouteAnalysisChart from "./(charts)/route-analysis-chart"
 import { Button } from "@/components/ui/button"
 import { RefreshCw } from "lucide-react"
 import axios from "axios"
@@ -21,7 +18,6 @@ import { RecentRequests } from "@/components/recent-requests"
 export default function AnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState<"24h" | "7d" | "30d" | "90d">("7d")
   const [selectedRoute, setSelectedRoute] = useState<string>("/api/users")
-  const { data, isLoading, error, refetch } = useApiAnalytics(timeRange, selectedRoute)
   
   const [routes,setRoutes] = useState<any[]>([])
   useEffect(()=>{
@@ -30,33 +26,24 @@ export default function AnalyticsDashboard() {
         const res = await axios.get(`http://localhost:4000/api/v1/request/getall`, {withCredentials: true})
         console.log(res.data.data)
         setRoutes(res.data.data)
+        setSelectedRoute(res.data.data[0].id)
       } catch (error) {
         console.log(error)
       }
     }
     fetching()
   }
-  ,[])
+  ,[timeRange])
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    )
+  const refetch =  ()=>{
+    const temp = timeRange;
+    setTimeRange("24h")
+    setTimeRange(temp)
   }
 
-  if (error) {
-    return (
-      <Card>
-        <CardContent className="pt-6">
-          <div className="text-center text-destructive">Error loading analytics data. Please try again later.</div>
-        </CardContent>
-      </Card>
-    )
-  }
 
-  console.log(data)
+
+
   
 
   return (
@@ -98,9 +85,9 @@ export default function AnalyticsDashboard() {
                 <SelectValue placeholder="Select API route" />
               </SelectTrigger>
               <SelectContent>
-                {data?.availableRoutes.map((route) => (
-                  <SelectItem key={route} value={route}>
-                    {route}
+                {routes.map((route) => (
+                  <SelectItem key={route.id} value={route.id}>
+                    {route.requestUrl}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -108,11 +95,12 @@ export default function AnalyticsDashboard() {
           </div>
         </CardHeader>
 
+        {/* Route Specific Analysis */}
         <CardContent>
           <div className="h-[400px]">
-            <RouteAnalysisChart data={data?.routeAnalysisData || []} route={selectedRoute} />
+            <RouteAnalysisChart timeRange={timeRange} id={selectedRoute}/>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <div className="bg-muted/40 p-4 rounded-lg">
               <h3 className="text-sm font-medium text-muted-foreground mb-1">Avg. Response Time</h3>
               <p className="text-2xl font-semibold">{data?.routeMetrics.avgResponseTime} ms</p>
@@ -125,17 +113,16 @@ export default function AnalyticsDashboard() {
               <h3 className="text-sm font-medium text-muted-foreground mb-1">Cache Hit Rate</h3>
               <p className="text-2xl font-semibold">{data?.routeMetrics.cacheHitRate}%</p>
             </div>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
 
       <Tabs defaultValue="usage">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
           <TabsTrigger value="usage">API Usage</TabsTrigger>
           <TabsTrigger value="endpoints">Endpoints</TabsTrigger>
           <TabsTrigger value="response-time">Response Time</TabsTrigger>
           <TabsTrigger value="status-codes">Status Codes</TabsTrigger>
-          <TabsTrigger value="user-analysis">User Analysis</TabsTrigger>
         </TabsList>
         
         {/* API Request Usage Overview */}
@@ -198,30 +185,7 @@ export default function AnalyticsDashboard() {
           </Card>
         </TabsContent>
         
-        <TabsContent value="user-analysis" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>User Analysis</CardTitle>
-              <CardDescription>User behavior and demographics</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-4">User Behavior</h3>
-                  <div className="h-[300px]">
-                    <UserAnalysisChart data={data?.userAnalysisData || []} />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium mb-4">Geographic Distribution</h3>
-                  <div className="h-[300px]">
-                    <GeographicDistribution data={data?.geoDistributionData || []} />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        
       </Tabs>
 
       {/* Real-time monitoring section */}
