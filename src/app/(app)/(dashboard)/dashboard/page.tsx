@@ -10,19 +10,34 @@ import { RecentRequests } from "@/components/recent-requests"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import Overview from "@/components/usage-overview"
+import { useEffect, useState } from "react"
 
 
-
+interface User{
+  email:string
+}
 
 
 export default function DashboardPage() {
   const router = useRouter()
-
+  const [user,setUser] = useState<User|null>(null)
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get('http://localhost:4000/api/v1/user/issignedin',{withCredentials:true})
+        console.log(res.data.data)
+        setUser(res.data.data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchUser()
+  }, [])
   
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-semibold md:text-2xl">Dashboard</h1>
+            <h1 className="text-xl font-semibold md:text-2xl">Welcome , {user===null?"":user.email.split('@')[0]}</h1>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
             {/* <TabsList>

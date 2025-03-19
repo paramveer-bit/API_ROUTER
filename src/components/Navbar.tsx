@@ -66,26 +66,26 @@ function Navbar() {
           Analytics
         </Link>
         <Link
-          href="#"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+          href="/authentication"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 ${active=="authentication"?activeClass:hover}`}
         >
           <Shield className="h-4 w-4" />
           Authentication
         </Link>
         <Link
-          href="#"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+          href="/team"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 ${active=="team"?activeClass:hover}`}
         >
           <Users className="h-4 w-4" />
           Team
         </Link>
-        <Link
+        {/* <Link
           href="#"
           className={`flex items-center gap-3 rounded-lg px-3 py-2 ${active=="settings"?activeClass:hover}`}
         >
           <Settings className="h-4 w-4" />
           Settings
-        </Link>
+        </Link> */}
       </div>
 
       {/* Logout Button at Bottom */}

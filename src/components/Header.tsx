@@ -31,12 +31,12 @@ function Header() {
                 <ArrowUpRight className="ml-1 h-4 w-4" />
                 </Link>
             </Button>
-            <Button variant="outline" size="sm" asChild>
+            {/* <Button variant="outline" size="sm" asChild>
                 <Link href="/settings">
                 <Settings className="mr-1 h-4 w-4" />
                 Settings
                 </Link>
-            </Button>
+            </Button> */}
         </nav>
     </header>
   )

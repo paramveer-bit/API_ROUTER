@@ -38,7 +38,7 @@ export default function LoginForm() {
     try {
       const res = await axios.post(`http://localhost:4000/api/v1/user/signin`, {email: values.email, password: values.password},{withCredentials:true} )
       console.log(res)
-      // router.push("/dashboard")
+      router.push("/dashboard")
     } catch (error:any) {
       console.log(error)
       toast({
