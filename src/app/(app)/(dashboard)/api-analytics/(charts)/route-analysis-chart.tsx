@@ -35,10 +35,26 @@ export default function RouteAnalysisChart({ timeRange,id }: RouteAnalysisChartP
   }
   ,[id,timeRange])
 
+  useEffect(() => {
+    console.log("Data fetched:")
+    console.log(data)
+  },[data])
+
   if(data==null){
     return (
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary">
+          </div>
+        </div>
+    )
+  }
+
+  if(data.length===0){
+    return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          {/* <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"> */}
+            No data available for this route for the selected time range.
+          {/* </div> */}
         </div>
     )
   }

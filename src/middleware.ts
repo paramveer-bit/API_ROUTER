@@ -3,11 +3,12 @@ import { NextResponse, NextRequest } from "next/server";
 export async function middleware(req: NextRequest) {
     const cookie = req.cookies.get("token")?.value;
     const url = req.nextUrl
-    console.log(cookie)
+    console.log("Middleware triggered")
     console.log(url.pathname)
     if (cookie !== undefined &&
         (url.pathname.startsWith('/login') ||
             url.pathname.startsWith('/signup') ||
+            url.pathname.startsWith('/placeholder.svg') ||
             (url.pathname.startsWith('/') && url.pathname.length === 1) ||
             url.pathname.startsWith('/verify'))
     ) {

@@ -54,7 +54,7 @@ export default function DashboardPage() {
                 <Card className="lg:col-span-4">
                   <CardHeader>
                     <CardTitle>Recent API Requests</CardTitle>
-                    <CardDescription>There were 1,120 requests in the last 24 hours.</CardDescription>
+                    <CardDescription>There were these requests in the last 24 hours.</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <RecentRequests type={""} user_code={""}/>
@@ -64,7 +64,7 @@ export default function DashboardPage() {
                 <Card className="lg:col-span-3">
                   <CardHeader>
                     <CardTitle>API Routes</CardTitle>
-                    <CardDescription>You have 12 active API routes.</CardDescription>
+                    <CardDescription>You have these active API routes.</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <ApiRoutesList />

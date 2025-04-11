@@ -1,13 +1,14 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Check, X, Plus } from "lucide-react"
+import { Check, X, Plus, MapPin, Route } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import axios from "axios"
 import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
 
 interface Request {
   id: string
@@ -44,6 +45,8 @@ export default function DelayedRequests() {
       bannedUser: ["user3"],
     },
   ])
+  const [fectching,setFectching] = useState(false)
+  const router = useRouter()
 
   const [editingStates, setEditingStates] = useState<{ [key: string]: Partial<Request> }>({})
   const [savingStates, setSavingStates] = useState<{ [key: string]: boolean }>({})
@@ -132,16 +135,39 @@ export default function DelayedRequests() {
   }
 
   useEffect(() => {
+    setFectching(true)
     console.log("Rinning")
     fetchRequest()
+    setFectching(false)
 
   },[])
 //--------------------------------------------------------------------- 
 
-  useEffect(() => {
-    console.log("++++++++++++++++++++++++++++")
+  useEffect(()=>{
     console.log(requests)
+    console.log(fectching)
+    console.log(requests.length)
   },[requests])
+  
+  if (!fectching && requests.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen p-4">
+        <div className="flex flex-col items-center justify-center max-w-md text-center space-y-4">
+          <div className="rounded-full bg-muted p-6 w-24 h-24 flex items-center justify-center">
+            <Route className="h-12 w-12 text-muted-foreground" />
+          </div>
+          <h3 className="text-2xl font-semibold">No routes found</h3>
+          <p className="text-muted-foreground">
+            You don't have any routes to be displayed. Create a new route to get started.
+          </p>
+          <Button className="mt-4" onClick={() => router.push("/api-routes/add-new-routes")}>
+            <MapPin className="mr-2 h-4 w-4" />
+            Create New Route
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto p-4">

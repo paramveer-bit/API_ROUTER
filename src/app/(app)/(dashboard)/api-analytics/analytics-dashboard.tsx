@@ -73,6 +73,7 @@ export default function AnalyticsDashboard() {
       <Overview timeRange={timeRange} dataTemp={null}/>
       {/* Route-specific analysis section */}
       <Card>
+        
         {/* Route Selector */}
         <CardHeader>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -81,40 +82,48 @@ export default function AnalyticsDashboard() {
               <CardDescription>Detailed metrics for a specific API route</CardDescription>
             </div>
             <Select value={selectedRoute} onValueChange={setSelectedRoute}>
-              <SelectTrigger className="w-full md:w-[250px]">
-                <SelectValue placeholder="Select API route" />
-              </SelectTrigger>
-              <SelectContent>
-                {routes.map((route) => (
-                  <SelectItem key={route.id} value={route.id}>
-                    {route.requestUrl}
-                  </SelectItem>
-                ))}
-              </SelectContent>
+                  <SelectTrigger className="w-full md:w-[250px]">
+                    <SelectValue placeholder="Select API route" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {routes.map((route) => (
+                      <SelectItem key={route.id} value={route.id}>
+                        {route.requestUrl}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
             </Select>
           </div>
         </CardHeader>
 
-        {/* Route Specific Analysis */}
-        <CardContent>
-          <div className="h-[400px]">
-            <RouteAnalysisChart timeRange={timeRange} id={selectedRoute}/>
+        {routes.length === 0 ?
+          <div className="flex items-center justify-center h-[400px]">
+            <p className="text-muted-foreground">No routes available for analysis</p>
           </div>
-          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            <div className="bg-muted/40 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Avg. Response Time</h3>
-              <p className="text-2xl font-semibold">{data?.routeMetrics.avgResponseTime} ms</p>
+            :
+          // Route Specific Analysis
+          <CardContent>
+            <div className="h-[400px]">
+              <RouteAnalysisChart timeRange={timeRange} id={selectedRoute}/>
             </div>
-            <div className="bg-muted/40 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Success Rate</h3>
-              <p className="text-2xl font-semibold">{data?.routeMetrics.successRate}%</p>
-            </div>
-            <div className="bg-muted/40 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Cache Hit Rate</h3>
-              <p className="text-2xl font-semibold">{data?.routeMetrics.cacheHitRate}%</p>
-            </div>
-          </div> */}
-        </CardContent>
+            {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+              <div className="bg-muted/40 p-4 rounded-lg">
+                <h3 className="text-sm font-medium text-muted-foreground mb-1">Avg. Response Time</h3>
+                <p className="text-2xl font-semibold">{data?.routeMetrics.avgResponseTime} ms</p>
+              </div>
+              <div className="bg-muted/40 p-4 rounded-lg">
+                <h3 className="text-sm font-medium text-muted-foreground mb-1">Success Rate</h3>
+                <p className="text-2xl font-semibold">{data?.routeMetrics.successRate}%</p>
+              </div>
+              <div className="bg-muted/40 p-4 rounded-lg">
+                <h3 className="text-sm font-medium text-muted-foreground mb-1">Cache Hit Rate</h3>
+                <p className="text-2xl font-semibold">{data?.routeMetrics.cacheHitRate}%</p>
+              </div>
+            </div> */}
+          </CardContent>
+        }
+          
+        
       </Card>
 
       <Tabs defaultValue="usage">

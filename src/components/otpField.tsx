@@ -36,13 +36,14 @@ export default function OtpVerificationForm({email}:{email: string}) {
   }, [timeLeft])
 
 //   Submitting OTP---------------------------------------
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    router.push("/login")
 
+    const decodedEmail = decodeURIComponent(email)
     // Here you would typically send the OTP to your backend for verification
     try {
-        const res = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/verify-otp`, {email: email, otp: values.otp})
+        const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/verify`, {email: decodedEmail, otp: values.otp})
+        console.log(res)
         router.push("/login")
     } catch (error:any) {
         console.log(error)
@@ -51,6 +52,7 @@ export default function OtpVerificationForm({email}:{email: string}) {
             description:error.message,
             variant : "destructive"
         })
+        setIsLoading(false)
     }
     
   }
@@ -58,8 +60,9 @@ export default function OtpVerificationForm({email}:{email: string}) {
 //   Resending otp---------------------------------------
   function handleResendOtp() {
     setResending(true)
+    const decodedEmail = decodeURIComponent(email)
     try {
-        const res = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/resend-otp`, {email: email})
+        const res = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/resendOtp`, {email: decodedEmail})
         toast({
             title: "OTP Resent",
             description: "A new OTP has been sent to your email.",
