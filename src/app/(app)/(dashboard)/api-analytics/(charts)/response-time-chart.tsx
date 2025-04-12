@@ -17,7 +17,7 @@ export default function ResponseTimeChart({timeRange}:{timeRange: string}) {
     const fetching = async () => {
       try {
         const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
-        const res = await axios.get(`http://localhost:4000/api/v1/requestLog/end-point-response-time?days=${days}`, {withCredentials: true})
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/requestLog/end-point-response-time?days=${days}`, {withCredentials: true})
         setData(res.data.data)
       } catch (error) {
         

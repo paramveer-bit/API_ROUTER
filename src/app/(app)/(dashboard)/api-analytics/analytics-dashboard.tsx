@@ -23,7 +23,7 @@ export default function AnalyticsDashboard() {
   useEffect(()=>{
     const fetching = async () => {
       try {
-        const res = await axios.get(`http://localhost:4000/api/v1/request/getall`, {withCredentials: true})
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/request/getall`, {withCredentials: true})
         console.log(res.data.data)
         setRoutes(res.data.data)
         setSelectedRoute(res.data.data[0].id)

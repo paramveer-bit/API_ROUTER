@@ -22,7 +22,7 @@ export default function UserDevicesChart({ timeRange, searchedUserCode, type }: 
   const deviceDataFetch = async () =>{
     try {
       const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
-      const res = await axios.get(`http://localhost:4000/api/v1/requestLog/deviceDetails?user_code=${searchedUserCode}&days=${days}`, {withCredentials: true})
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/requestLog/deviceDetails?user_code=${searchedUserCode}&days=${days}`, {withCredentials: true})
       if(type === "device"){
         setData(res.data.data.device)
       }else{

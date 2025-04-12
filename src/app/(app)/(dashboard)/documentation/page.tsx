@@ -27,6 +27,7 @@ export default function Documentation() {
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
             <Card>
+              {/* What is api dynmaic router */}
               <CardHeader>
                 <CardTitle>What is the Dynamic API Router?</CardTitle>
                 <CardDescription>A robust platform for managing custom API routes</CardDescription>
@@ -39,7 +40,7 @@ export default function Documentation() {
                   simplifies API management but also provides a centralized solution to orchestrate all your
                   microservices under one unified hook.
                 </p>
-
+                  {/* key advantages and user onboarding */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <Card>
                     <CardHeader>
@@ -75,15 +76,14 @@ export default function Documentation() {
                         </li>
                         <li>
                           <strong>API Credentials:</strong> After sign up, each user is provided with a unique{" "}
-                          <code className="bg-muted px-1 py-0.5 rounded">clientid</code> and{" "}
-                          <code className="bg-muted px-1 py-0.5 rounded">userid</code> that must be included in every
+                          <code className="bg-muted px-1 py-0.5 rounded">clientid</code> {" "}that must be included in every
                           request.
                         </li>
                       </ul>
                     </CardContent>
                   </Card>
                 </div>
-
+                {/* Microservice architecture */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg">Microservices Architecture</CardTitle>
@@ -123,8 +123,9 @@ export default function Documentation() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <Accordion type="single" collapsible className="w-full">
+                  {/* Defining routes */}
                   <AccordionItem value="defining-routes">
-                    <AccordionTrigger>Defining Routes</AccordionTrigger>
+                  <AccordionTrigger>Defining Routes</AccordionTrigger>
                     <AccordionContent className="space-y-4">
                       <p>When you define a route, you need to provide two important values:</p>
                       <ul className="list-disc pl-5 space-y-2">
@@ -142,6 +143,7 @@ export default function Documentation() {
                     </AccordionContent>
                   </AccordionItem>
 
+                  {/* Path query and parameters  */}
                   <AccordionItem value="parameters">
                     <AccordionTrigger>Path and Query Parameters</AccordionTrigger>
                     <AccordionContent className="space-y-4">
@@ -198,16 +200,17 @@ export default function Documentation() {
                     </AccordionContent>
                   </AccordionItem>
 
+                  {/* Examples */}
                   <AccordionItem value="examples">
-                    <AccordionTrigger>Route Examples</AccordionTrigger>
+                    <AccordionTrigger>Route Examples : How to add routes in dashboard</AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-4">
                         <div className="p-4 border rounded-md">
                           <h4 className="font-medium mb-2">Example 1: Static Route Matching</h4>
                           <p className="mb-2">
-                            <strong>Frontend Request:</strong>
+                            <strong>Frontend Request:</strong> The url to which you are sending requests initially
                           </p>
-                          <p className="bg-muted p-2 rounded mb-3">https://abcd.in/klmo/param</p>
+                          <p className="bg-muted p-2 rounded mb-3">https://backend.in/klmo/param</p>
 
                           <p className="mb-2">
                             <strong>Route Configuration:</strong>
@@ -219,7 +222,7 @@ export default function Documentation() {
                             </li>
                             <li>
                               <strong>Forwarded Route:</strong>{" "}
-                              <code className="bg-muted px-1 py-0.5 rounded">https://abcd.in/klmo/param</code>
+                              <code className="bg-muted px-1 py-0.5 rounded">https://backend.in/klmo/param</code>
                             </li>
                           </ul>
                           <p className="mt-2 text-sm text-muted-foreground">
@@ -234,7 +237,7 @@ export default function Documentation() {
                           <p className="mb-2">
                             <strong>Frontend Request:</strong>
                           </p>
-                          <p className="bg-muted p-2 rounded mb-3">https://abcd.in/dash?id=10</p>
+                          <p className="bg-muted p-2 rounded mb-3">https://backend.in/dash?id=10</p>
 
                           <p className="mb-2">
                             <strong>Route Configuration:</strong>
@@ -246,7 +249,7 @@ export default function Documentation() {
                             </li>
                             <li>
                               <strong>Forwarded Route:</strong>{" "}
-                              <code className="bg-muted px-1 py-0.5 rounded">https://abcd.in/dash</code>
+                              <code className="bg-muted px-1 py-0.5 rounded">https://backend.in/dash</code>
                             </li>
                           </ul>
                           <p className="mt-2 text-sm text-muted-foreground">
@@ -262,7 +265,7 @@ export default function Documentation() {
                           <p className="mb-2">
                             <strong>Frontend Request:</strong>
                           </p>
-                          <p className="bg-muted p-2 rounded mb-3">https://abcd.in/bash/paramveer</p>
+                          <p className="bg-muted p-2 rounded mb-3">https://backend.in/bash/paramveer</p>
 
                           <p className="mb-2">
                             <strong>Route Configuration:</strong>
@@ -274,7 +277,7 @@ export default function Documentation() {
                             </li>
                             <li>
                               <strong>Forwarded Route:</strong>{" "}
-                              <code className="bg-muted px-1 py-0.5 rounded">https://abcd.in/bash/[path]</code>
+                              <code className="bg-muted px-1 py-0.5 rounded">https://backend.in/bash/[path]</code>
                             </li>
                           </ul>
                           <p className="mt-2 text-sm text-muted-foreground">
@@ -301,18 +304,15 @@ export default function Documentation() {
               <CardContent className="space-y-4">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-medium mb-2">Mandatory Fields</h3>
+                    <h3 className="text-lg font-medium mb-2">Mandatory Fields : These should be set in headers while sending any requests</h3>
                     <ul className="list-disc pl-5 space-y-2">
                       <li>
-                        <code className="bg-muted px-1 py-0.5 rounded">clientid</code>: The unique identifier for the
-                        client.
+                        <code className="bg-muted px-1 py-0.5 rounded">secret</code>: The unique identifier for the
+                        client i.e. Your Api Key .
                       </li>
                       <li>
-                        <code className="bg-muted px-1 py-0.5 rounded">userid</code>: The unique identifier for the user
-                        making the request.
-                      </li>
-                      <li>
-                        <strong>Requested Path:</strong> Specifies the API route, including any path parameters.
+                        <code className="bg-muted px-1 py-0.5 rounded">user_code</code>: The unique identifier for the user
+                        making the request. For ratelimiting and analytics purposes.
                       </li>
                     </ul>
                   </div>
@@ -338,8 +338,8 @@ export default function Documentation() {
                     <pre className="bg-muted p-4 rounded-md overflow-auto">
                       {`import axios from 'axios';
 
-const clientID = 'your-client-id';
-const userID = 'your-user-id';
+const secret = 'your-api-key';
+const user_code = 'unique_user_code_given_by_you';
 const baseUrl = 'https://yourapigateway.com';
 
 const sendRequest = async (path, data) => {
@@ -365,12 +365,11 @@ sendRequest('dashboard/settings', { key: 'value' });`}
                     <p className="font-medium">Key Points:</p>
                     <ul className="list-disc pl-5 space-y-1 mt-2">
                       <li>
-                        Replace <code className="bg-muted px-1 py-0.5 rounded">sendhere</code> in the URL with the
-                        correct endpoint if necessary.
+                        Replace <code className="bg-muted px-1 py-0.5 rounded">baseurl</code> with the url that will be provided to you
                       </li>
                       <li>
-                        Ensure headers include both <code className="bg-muted px-1 py-0.5 rounded">clientid</code> and{" "}
-                        <code className="bg-muted px-1 py-0.5 rounded">userid</code> for proper authentication.
+                        Ensure headers include both <code className="bg-muted px-1 py-0.5 rounded">secret</code> and{" "}
+                        <code className="bg-muted px-1 py-0.5 rounded">user_code</code> for proper authentication.
                       </li>
                       <li>Adjust Axios configuration to meet your specific project requirements.</li>
                     </ul>
@@ -564,14 +563,9 @@ sendRequest('dashboard/settings', { key: 'value' });`}
             <Alert>
               <AlertDescription>
                 Need more help? Contact our support team at{" "}
-                <a href="mailto:support@apigateway.com" className="font-medium underline">
-                  support@apigateway.com
+                <a href="mailto:paramveer124501@gmail.com" className="font-medium underline">
+                  paramveer124501@gmail.com
                 </a>{" "}
-                or visit our{" "}
-                <a href="#" className="font-medium underline">
-                  support portal
-                </a>
-                .
               </AlertDescription>
             </Alert>
           </TabsContent>

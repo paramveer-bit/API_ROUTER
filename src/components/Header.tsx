@@ -3,15 +3,7 @@ import React from 'react'
 import Link from "next/link"
 import {
   ArrowUpRight,
-  BarChart3,
-  Database,
-  GitBranch,
-  GitFork,
   Globe,
-  LayoutDashboard,
-  Settings,
-  Shield,
-  Users,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -26,7 +18,7 @@ function Header() {
         </Link>
         <nav className="ml-auto flex gap-2">
             <Button variant="outline" size="sm" asChild>
-                <Link href="/docs">
+                <Link href="/documentation">
                 Documentation
                 <ArrowUpRight className="ml-1 h-4 w-4" />
                 </Link>

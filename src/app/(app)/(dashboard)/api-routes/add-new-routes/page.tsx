@@ -49,7 +49,7 @@ export default function AddNewRoutePage() {
 
     console.log(newRoute)
     try {
-      const res =  await axios.post("http://localhost:4000/api/v1/request/addnew",newRoute,{withCredentials: true})
+      const res =  await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/request/addnew`,newRoute,{withCredentials: true})
       console.log(res)
     } catch (error) {
       toast({

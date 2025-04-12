@@ -24,7 +24,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/v1/user/issignedin',{withCredentials:true})
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user/issignedin`,{withCredentials:true})
         console.log(res.data.data)
         setUser(res.data.data)
       } catch (error) {

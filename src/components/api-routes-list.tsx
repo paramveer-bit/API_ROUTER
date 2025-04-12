@@ -27,7 +27,7 @@ export function ApiRoutesList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:4000/api/v1/request/getall`,{withCredentials: true})
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/request/getall`,{withCredentials: true})
         console.log(res.data.data)
         setApiRoutes(res.data.data)
       } catch (error) {

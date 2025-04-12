@@ -36,11 +36,11 @@ export function RecentRequests({type,user_code} : {type: string,user_code: strin
     const fetchData = async () => {
       try {
         if(type=='user'){
-          const res = await axios.get(`http://localhost:4000/api/v1/requestLog/userLast5Min?user_code=${user_code}`,{withCredentials: true})
+          const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/requestLog/userLast5Min?user_code=${user_code}`,{withCredentials: true})
           setRequests(res.data.data)
           return
         }
-        const res = await axios.get(`http://localhost:4000/api/v1/requestLog/last5Min`,{withCredentials: true})
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/requestLog/last5Min`,{withCredentials: true})
         setRequests(res.data.data)
       } catch (error) {
         
