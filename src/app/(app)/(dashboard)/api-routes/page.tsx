@@ -53,7 +53,7 @@ export default function DelayedRequests() {
   const [errorStates, setErrorStates] = useState<{ [key: string]: boolean }>({})
   const [newBannedUser, setNewBannedUser] = useState<{ [key: string]: string }>({})
 
-  const handleChange = (id: string, field: keyof Request, value: any) => {
+  const handleChange = (id: string, field: keyof Request, value:string | number | boolean | string[]) => {
     setEditingStates((prev) => ({
       ...prev,
       [id]: { ...prev[id], [field]: value },
@@ -73,6 +73,8 @@ export default function DelayedRequests() {
       setErrorStates((prev) => ({ ...prev, [id]: false }))
     } catch (error) {
       // If there's an error, set the error state
+      console.error("Error fetching API usage data:", error)
+
       toast({
         title: "Error",
         description:"Error occured in updating request. Try after some time.",
@@ -116,38 +118,34 @@ export default function DelayedRequests() {
   }
 
 //--------------Fecthing all requests from the server----------------
-  const fetchRequest = async ()=>{
-    console.log("----------------")
-    try {
-      console.log(requests)
-      console.log(process.env.NEXT_PUBLIC_API_URL)
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/request/getall`,{withCredentials: true})
-      console.log(res);
-      setRequests(res.data.data)
-    } catch (error) {
-      console.log(error);
-      toast({
-          title: "Error",
-          description:"Error occured in fetching request.",
-          variant : "destructive"
-      })
-    }
-  }
+  
 
   useEffect(() => {
+    const fetchRequest = async ()=>{
+      console.log("----------------")
+      try {
+        console.log(process.env.NEXT_PUBLIC_API_URL)
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/request/getall`,{withCredentials: true})
+        console.log(res);
+        setRequests(res.data.data)
+      } catch (error) {
+        console.log(error);
+        toast({
+            title: "Error",
+            description:"Error occured in fetching request.",
+            variant : "destructive"
+        })
+      }
+    }
     setFectching(true)
     console.log("Rinning")
     fetchRequest()
     setFectching(false)
 
-  },[])
+  },[toast])
 //--------------------------------------------------------------------- 
 
-  useEffect(()=>{
-    console.log(requests)
-    console.log(fectching)
-    console.log(requests.length)
-  },[requests])
+  
   
   if (!fectching && requests.length === 0) {
     return (
@@ -158,7 +156,7 @@ export default function DelayedRequests() {
           </div>
           <h3 className="text-2xl font-semibold">No routes found</h3>
           <p className="text-muted-foreground">
-            You don't have any routes to be displayed. Create a new route to get started.
+            You don&#39;t have any routes to be displayed. Create a new route to get started.
           </p>
           <Button className="mt-4" onClick={() => router.push("/api-routes/add-new-routes")}>
             <MapPin className="mr-2 h-4 w-4" />

@@ -29,6 +29,7 @@ function Navbar() {
       router.push("/")
       console.log(res)
     } catch (error) {
+      console.error("Error fetching API usage data:", error)
       toast({
         title: "Error",
         description: "Error logging out",

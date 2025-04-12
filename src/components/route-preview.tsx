@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge"
 
 interface RoutePreviewProps {
   path: string,
@@ -8,7 +7,7 @@ export function RoutePreview({ path }: RoutePreviewProps) {
   const formattedPath = path ? `/api/${path}` : "/api/[route]"
 
   // Extract parameter names from the path
-  const pathParams = path.match(/\[(.*?)\]/g)?.map((param) => param.replace(/[[\]]/g, "")) || []
+  // const pathParams = path.match(/\[(.*?)\]/g)?.map((param) => param.replace(/[[\]]/g, "")) || []
 
   return (
     <div className="space-y-4">

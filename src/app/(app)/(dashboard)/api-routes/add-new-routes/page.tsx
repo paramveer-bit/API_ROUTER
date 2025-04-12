@@ -52,6 +52,7 @@ export default function AddNewRoutePage() {
       const res =  await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/request/addnew`,newRoute,{withCredentials: true})
       console.log(res)
     } catch (error) {
+      console.error("Error fetching API usage data:", error)
       toast({
         title: "Error",
         description: "Failed to add new route",

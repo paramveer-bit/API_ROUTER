@@ -3,8 +3,8 @@
 import type React from "react"
 
 import Usage from "@/components/usage-overview"
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useCallback, useEffect, useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import UserActivityChart from "./(user-charts)/user-activity-chart"
 import UserEndpointsChart from "./(user-charts)/user-endpoints-chart"
 import UserDevicesChart from "./(user-charts)/user-devices-chart"
-import UserSessionsTable from "./user-sessions-table"
 import { Download, RefreshCw, Search, User } from "lucide-react"
 import axios from "axios"
 import { useToast } from "@/hooks/use-toast"
@@ -31,7 +30,7 @@ export default function UserAnalyticsDashboard() {
   const {toast} = useToast()
   // const { data, isLoading, error, refetch } = useUserAnalytics(searchedUserCode, timeRange)
 
-  const fetch = async () => {
+  const fetch = useCallback(async () => {
     setIsLoading(true)
     try {
       const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
@@ -52,14 +51,13 @@ export default function UserAnalyticsDashboard() {
     } finally{
       setIsLoading(false)
     }
-  }
+  },[searchedUserCode,timeRange,toast])
 
   
 
   useEffect (()=>{
-    console.log("searchedUserCode", searchedUserCode)
     fetch()
-  },[searchedUserCode,timeRange])
+  },[fetch])
 
 
   const handleSearch = () => {
@@ -288,7 +286,7 @@ export default function UserAnalyticsDashboard() {
               <User className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium">No User Selected</h3>
               <p className="text-muted-foreground mt-2 max-w-md">
-                Enter a user code above to view detailed analytics for a specific user. You'll be able to see their
+                Enter a user code above to view detailed analytics for a specific user. You&#39;ll be able to see their
                 activity, endpoint usage, devices, and sessions.
               </p>
             </div>

@@ -19,24 +19,25 @@ interface UserDevicesChartProps {
 
 export default function UserDevicesChart({ timeRange, searchedUserCode, type }: UserDevicesChartProps) {
   const [data,setData] = useState<DeviceData[] | null>(null)
-  const deviceDataFetch = async () =>{
-    try {
-      const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/requestLog/deviceDetails?user_code=${searchedUserCode}&days=${days}`, {withCredentials: true})
-      if(type === "device"){
-        setData(res.data.data.device)
-      }else{
-        setData(res.data.data.browser)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  
 
   useEffect(() => {
+    const deviceDataFetch = async () =>{
+      try {
+        const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/requestLog/deviceDetails?user_code=${searchedUserCode}&days=${days}`, {withCredentials: true})
+        if(type === "device"){
+          setData(res.data.data.device)
+        }else{
+          setData(res.data.data.browser)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
     deviceDataFetch()
   }
-  ,[searchedUserCode,timeRange])
+  ,[searchedUserCode,timeRange,type])
 
 
   const COLORS = [

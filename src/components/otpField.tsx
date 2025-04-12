@@ -45,11 +45,15 @@ export default function OtpVerificationForm({email}:{email: string}) {
         const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/verify`, {email: decodedEmail, otp: values.otp})
         console.log(res)
         router.push("/login")
-    } catch (error:any) {
+    } catch (error) {
         console.log(error)
+        const errorMessage = axios.isAxiosError(error) && error.response?.data?.message
+            ? error.response.data.message
+            : (error as Error).message || "An unknown error occurred"
+
         toast({
             title: "Error",
-            description:error.message,
+            description: errorMessage,
             variant : "destructive"
         })
         setIsLoading(false)
@@ -62,17 +66,21 @@ export default function OtpVerificationForm({email}:{email: string}) {
     setResending(true)
     const decodedEmail = decodeURIComponent(email)
     try {
-        const res = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/resendOtp`, {email: decodedEmail})
+        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/resendOtp`, {email: decodedEmail})
         toast({
             title: "OTP Resent",
             description: "A new OTP has been sent to your email.",
             })
         setResending(false)
-    } catch (error:any) {
+    } catch (error) {
         console.log(error)
+        const errorMessage = axios.isAxiosError(error) && error.response?.data?.message
+            ? error.response.data.message
+            : (error as Error).message || "An unknown error occurred"
+
         toast({
             title: "Error",
-            description:error.message,
+            description: errorMessage,
             variant : "destructive"
         })
         setResending(false)

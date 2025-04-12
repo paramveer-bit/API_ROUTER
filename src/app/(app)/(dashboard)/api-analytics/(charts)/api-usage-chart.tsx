@@ -23,7 +23,7 @@ export default function ApiUsageChart({timeRange}:{timeRange: string}) {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/requestLog/apiUsageChart?days=${days}`, {withCredentials: true})
         setData(res.data.data)
       } catch (error) {
-        
+        console.error("Error fetching API usage data:", error)
       }
     }
     fetching()

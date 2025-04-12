@@ -41,15 +41,19 @@ export default function SignupForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true)
     try {
-        const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/signup`, {email: values.email, password: values.password});
+        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/signup`, {email: values.email, password: values.password});
         setIsLoading(false)
         router.push(`/verify/${values.email}`)
-    } catch (error:any) {
-        console.log(error);
+    } catch (error) {
+      const errorMessage = axios.isAxiosError(error) && error.response?.data?.message
+            ? error.response.data.message
+            : (error as Error).message || "An unknown error occurred"
+
+        console.error("Error fetching API usage data:", error);
         setIsLoading(false)
         toast({
           title: "Error",
-          description: error.message,
+          description: errorMessage,
           variant : "destructive"
         })
     }

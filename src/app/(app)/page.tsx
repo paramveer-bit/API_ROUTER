@@ -4,7 +4,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, CheckCircle, Code, Database, Globe, Lock, BarChart, Shield, Zap, Menu, Activity, Clock } from "lucide-react"
+import { ArrowRight, CheckCircle, Code, Globe, Lock, BarChart, Shield, Menu, Activity, Clock } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
@@ -661,7 +661,7 @@ function TestimonialCard({ quote, author, role }: TestimonialCardProps) {
   return (
     <Card>
       <CardContent className="pt-6">
-        <div className="mb-4 text-4xl">"</div>
+        <div className="mb-4 text-4xl">&#34;</div>
         <p className="mb-4 text-muted-foreground">{quote}</p>
         <div className="mt-6">
           <p className="font-medium">{author}</p>

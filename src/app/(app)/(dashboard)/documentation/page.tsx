@@ -36,7 +36,7 @@ export default function Documentation() {
                 <p>
                   The Dynamic API Router is a robust platform designed for managing custom API routes and orchestrating
                   microservices. It acts as a gateway that authenticates incoming requests, applies route-specific rate
-                  limiting and caching, and forwards traffic to the user's own backend services. This system not only
+                  limiting and caching, and forwards traffic to the user&#39;s own backend services. This system not only
                   simplifies API management but also provides a centralized solution to orchestrate all your
                   microservices under one unified hook.
                 </p>
@@ -169,7 +169,7 @@ export default function Documentation() {
                             </p>
                             <p>
                               - The parameter <code className="bg-background px-1 py-0.5 rounded">path</code> will
-                              capture "reports".
+                              capture &#34;reports&#34;.
                             </p>
                           </div>
                         </div>
@@ -320,7 +320,7 @@ export default function Documentation() {
                   <div>
                     <h3 className="text-lg font-medium mb-2">How It Works</h3>
                     <ol className="list-decimal pl-5 space-y-2">
-                      <li>The user's front-end sends a request to the API Gateway endpoint.</li>
+                      <li>The user&#39;s front-end sends a request to the API Gateway endpoint.</li>
                       <li>The API Gateway verifies the credentials (clientid and userid).</li>
                       <li>The system matches the requested path to the registered routes.</li>
                       <li>It applies any configured rate limiting, caching, and user blocking rules.</li>

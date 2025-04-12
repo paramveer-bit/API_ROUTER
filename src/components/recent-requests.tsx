@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Activity, Check, Clock, User, X } from "lucide-react"
+import { Activity, Clock, User } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -43,11 +43,12 @@ export function RecentRequests({type,user_code} : {type: string,user_code: strin
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/requestLog/last5Min`,{withCredentials: true})
         setRequests(res.data.data)
       } catch (error) {
-        
+        console.error("Error fetching API usage data:", error)
+
       }
     }
     fetchData()
-  },[user_code])
+  },[user_code,type])
 
 
 

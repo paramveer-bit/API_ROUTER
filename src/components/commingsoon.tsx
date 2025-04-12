@@ -12,7 +12,7 @@ export default function ComingSoonPage() {
             <Construction className="h-12 w-12 text-primary" />
           </div>
           <CardTitle className="text-3xl">Feature Coming Soon</CardTitle>
-          <CardDescription className="text-lg">We're working hard to bring you something amazing</CardDescription>
+          <CardDescription className="text-lg">We&#39;re working hard to bring you something amazing</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-center space-x-2 text-muted-foreground">

@@ -2,7 +2,7 @@
 
 import { Line, LineChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import axios from "axios"
 
 interface ActivityData {
@@ -20,7 +20,7 @@ interface RouteAnalysisChartProps {
 export default function RouteAnalysisChart({ timeRange,id }: RouteAnalysisChartProps) {
 
   const [data,setData] = useState<ActivityData[] | null>(null)
-  const deviceDataFetch = async () =>{
+  const deviceDataFetch = useCallback( async () =>{
     try {
       const days = timeRange === "24h" ? 1 : timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/requestLog/routeSpecificData?routeId=${id}&days=${days}`, {withCredentials: true})
@@ -28,17 +28,14 @@ export default function RouteAnalysisChart({ timeRange,id }: RouteAnalysisChartP
     } catch (error) {
       console.log(error)
     }
-  }
+  },[id,timeRange])
 
   useEffect(() => {
     deviceDataFetch()
   }
-  ,[id,timeRange])
+  ,[deviceDataFetch])
 
-  useEffect(() => {
-    console.log("Data fetched:")
-    console.log(data)
-  },[data])
+
 
   if(data==null){
     return (

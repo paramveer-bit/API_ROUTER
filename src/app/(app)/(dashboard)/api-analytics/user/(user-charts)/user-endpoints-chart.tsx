@@ -28,7 +28,7 @@ export default function UserEndpointsChart({ searchedUserCode,timeRange }: UserE
         setData(res.data.data)
         console.log(res.data.data)
       } catch (error) {
-        
+        console.error("Error fetching API usage data:", error)
       }
     }
     fetch()

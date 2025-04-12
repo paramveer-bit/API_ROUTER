@@ -36,7 +36,7 @@ export default function SettingsPage() {
     setIsSubmitting(true)
 
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/resetpassword`, { oldPassword, newPassword }, { withCredentials: true })
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/resetpassword`, { oldPassword, newPassword }, { withCredentials: true })
 
       toast({
         title: "Success",
@@ -46,6 +46,7 @@ export default function SettingsPage() {
       setOldPassword("")
       setNewPassword("")
     } catch (error) {
+        console.error("Error fetching API usage data:", error)
       toast({
         title: "Error",
         description: "Failed to update password",
@@ -76,6 +77,7 @@ export default function SettingsPage() {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user/getApiKey`, { withCredentials: true })
         setApiKey(res.data.data.secret)
       } catch (error) {
+        console.error("Error fetching API key:", error)
         toast({
           title: "Error",
           description: "Failed to fetch API key",
@@ -84,7 +86,7 @@ export default function SettingsPage() {
       }
     }
     fetchApiKey()
-    }, [])
+    }, [toast])
 
 
   return (

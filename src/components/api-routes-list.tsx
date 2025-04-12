@@ -31,7 +31,7 @@ export function ApiRoutesList() {
         console.log(res.data.data)
         setApiRoutes(res.data.data)
       } catch (error) {
-        
+        console.error("Error fetching API usage data:", error)
       }
     }
     fetchData()

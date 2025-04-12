@@ -39,11 +39,15 @@ export default function LoginForm() {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/signin`, {email: values.email, password: values.password},{withCredentials:true} )
       console.log(res)
       router.push("/dashboard")
-    } catch (error:any) {
+    } catch (error) {
       console.log(error)
+      const errorMessage = axios.isAxiosError(error) && error.response?.data?.message
+                  ? error.response.data.message
+                  : (error as Error).message || "An unknown error occurred"
+      
       toast({
         title: "Error",
-        description:error.message,
+        description: errorMessage,
         variant : "destructive"
       })
     }
@@ -96,7 +100,7 @@ export default function LoginForm() {
       {/* Other links----------------------------------------------------------- */}
       <div className="mt-4 text-center text-sm text-gray-600">
         <p>
-          Don't have an account?{" "}
+          Don&#39;t have an account?{" "}
           <Link href="/signup" className="font-medium text-primary hover:underline">
             Sign up
           </Link>

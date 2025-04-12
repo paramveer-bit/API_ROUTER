@@ -45,7 +45,7 @@ function Usage({timeRange,dataTemp}:{timeRange: string|null,dataTemp: Data|null}
               setData(res.data.data)
               console.log(res.data.data)
             } catch (error) {
-              
+              console.error("Error fetching API usage data:", error)
             }
           }
           fetching()

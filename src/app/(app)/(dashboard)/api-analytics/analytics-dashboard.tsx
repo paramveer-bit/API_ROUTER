@@ -15,11 +15,23 @@ import axios from "axios"
 import Overview from "@/components/usage-overview"
 import { RecentRequests } from "@/components/recent-requests"
 
+interface Route{
+  id: string
+  requestUrl: string
+  forwardUrl: string
+  caching: boolean
+  cacheTime: number
+  rateLimiting: boolean
+  defaultRate: number
+  bannedUser: string[]
+  createdAt: string
+  updatedAt: string
+}
 export default function AnalyticsDashboard() {
-  const [timeRange, setTimeRange] = useState<"24h" | "7d" | "30d" | "90d">("7d")
+  const [timeRange, setTimeRange] = useState<string>("7d")
   const [selectedRoute, setSelectedRoute] = useState<string>("/api/users")
   
-  const [routes,setRoutes] = useState<any[]>([])
+  const [routes,setRoutes] = useState<Route[]>([])
   useEffect(()=>{
     const fetching = async () => {
       try {
@@ -52,7 +64,7 @@ export default function AnalyticsDashboard() {
         <h2 className="text-2xl font-semibold">API Usage Overview</h2>
         {/* ------------------------------ Time Range Selector and Refresh Butoon --------------------------------------- */}
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <Select value={timeRange} onValueChange={(value) => setTimeRange(value as any)}>
+          <Select value={timeRange} onValueChange={(value) => setTimeRange(value)}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Select time range" />
             </SelectTrigger>
