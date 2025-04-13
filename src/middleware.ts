@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
-    const cookie = req.cookies.get("authToken")?.value;
+    const cookie = req.cookies.get("auth_token")?.value;
     const url = req.nextUrl
     console.log("Middleware triggered")
     console.log(url.pathname)

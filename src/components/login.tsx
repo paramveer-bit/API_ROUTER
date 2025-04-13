@@ -38,10 +38,10 @@ export default function LoginForm() {
     try {
       console.log("Logging in...")
       const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/signin`, {email: values.email, password: values.password},{withCredentials:true} )
-      const token = "Email"; // Assuming the backend sends a token in the response
-      document.cookie = `authToken=${token}; path=/; secure; samesite=strict`;
 
       console.log(res)
+      // Handle successful login here (e.g., save token, redirect to dashboard)
+      const res2 = await axios.post('/api/login', values, { withCredentials: true })
       router.push("/dashboard")
     } catch (error) {
       console.log(error)
