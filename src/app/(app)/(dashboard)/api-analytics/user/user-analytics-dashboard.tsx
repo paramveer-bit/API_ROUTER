@@ -19,13 +19,32 @@ import { useToast } from "@/hooks/use-toast"
 import { RecentRequests } from "@/components/recent-requests"
 
 
+interface Metric {
+  total: number;
+  change: number;
+}
+
+interface Data {
+  userDetails: {
+    userId: string;
+    createdAt: string;
+    email: string;
+  }
+  average_response_time: Metric;
+  requests: Metric;
+  errors: Metric;
+  active_days: Metric;
+}
+
+type TimeRange = "24h" | "7d" | "30d" | "90d";
+
 export default function UserAnalyticsDashboard() {
   const [userCode, setUserCode] = useState("")
   const [searchedUserCode, setSearchedUserCode] = useState("")
-  const [timeRange, setTimeRange] = useState<"24h" | "7d" | "30d" | "90d">("7d")
+  const [timeRange, setTimeRange] = useState<TimeRange>("7d")
   const [error,setError] = useState<Error | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<Data|null>(null)
 
   const {toast} = useToast()
   // const { data, isLoading, error, refetch } = useUserAnalytics(searchedUserCode, timeRange)
@@ -39,13 +58,16 @@ export default function UserAnalyticsDashboard() {
       setData(res.data.data)
       console.log(res.data.data)
       setError(null)
-    } catch (error:any) {
+    } catch (error) {
+      const errorMessage = axios.isAxiosError(error) && error.response?.data?.message
+                        ? error.response.data.message
+                        : (error as Error).message || "An unknown error occurred"
       setData(null)
       console.log(error)
-      setError(error.response.data.message)
+      setError(errorMessage)
       toast({
         title: "Error",
-        description: error.response.data.message,
+        description: errorMessage,
         variant : "destructive"
       })
     } finally{
@@ -113,7 +135,8 @@ export default function UserAnalyticsDashboard() {
 
             {searchedUserCode && (
               <>
-                <Select value={timeRange} onValueChange={(value) => setTimeRange(value as any)}>
+              
+              <Select value={timeRange} onValueChange={(value) => setTimeRange(value as TimeRange )}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select time range" />
                   </SelectTrigger>
